@@ -1,0 +1,92 @@
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "maven"
+
+group = "myorg"
+version = 1.0
+sourceCompatibility = 1.8
+
+def defaultEncoding = 'UTF-8'
+[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets.all { set ->
+    def jarTask = task("${set.name}Jar", type: Jar) {
+        baseName = baseName + "-$set.name"
+        from set.output
+    }
+
+    artifacts {
+        archives jarTask
+    }
+}
+
+sourceSets {
+    api
+    impl
+}
+
+dependencies {
+    apiCompile 'commons-codec:commons-codec:1.5'
+    apiCompile 'javax.servlet:javax.servlet-api:4.0.0-b01'
+    apiCompile 'com.tictactec:ta-lib:0.4.0'
+    apiCompile 'com.atilika.kuromoji:kuromoji-core:0.9.0'
+    apiCompile 'com.atilika.kuromoji:kuromoji-jumandic:0.9.0'
+    apiCompile 'com.google.guava:guava:19.0'
+    apiCompile 'joda-time:joda-time:2.9.1'
+    apiCompile 'org.apache.commons:commons-compress:1.10'
+    apiCompile 'com.google.code.gson:gson:2.5'
+    apiCompile 'dom4j:dom4j:1.6.1'
+
+    implCompile sourceSets.api.output
+    implCompile 'commons-lang:commons-lang:2.6'
+    implCompile 'javax.servlet:javax.servlet-api:4.0.0-b01'
+    implCompile 'com.tictactec:ta-lib:0.4.0'
+    implCompile 'com.atilika.kuromoji:kuromoji-core:0.9.0'
+    implCompile 'com.atilika.kuromoji:kuromoji-jumandic:0.9.0'
+    implCompile 'com.google.guava:guava:19.0'
+    implCompile 'joda-time:joda-time:2.9.1'
+    implCompile 'org.apache.commons:commons-compress:1.10'
+    implCompile 'com.google.code.gson:gson:2.5'
+    implCompile 'dom4j:dom4j:1.6.1'
+
+    testCompile 'junit:junit:4.9'
+    testCompile sourceSets.api.output
+    testCompile sourceSets.impl.output
+    runtime configurations.apiRuntime
+    runtime configurations.implRuntime
+}
+
+jar {
+    from sourceSets.api.output
+    from sourceSets.impl.output
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri("${buildDir}/repo"))
+
+            addFilter("main") { artifact, file -> artifact.name == project.name }
+            ["api", "impl"].each { type ->
+                addFilter(type) { artifact, file -> artifact.name.endsWith("-$type") }
+
+                // We now have to map our configurations to the correct maven scope for each pom
+                ["compile", "runtime"].each { scope ->
+                    configuration = configurations[type + scope.capitalize()]
+                    ["main", type].each { pomName ->
+                        pom(pomName).scopeMappings.addMapping 1, configuration, scope
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
