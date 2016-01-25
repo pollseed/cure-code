@@ -1,5 +1,8 @@
 package test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.junit.Test;
 
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
@@ -15,9 +18,9 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     @Test
     public void t1() {
         final String camelCase = snakeCaseToCamelCase("user_id, member_id");
-        System.out.println("camelCase: " + camelCase);
+        assertThat(camelCase, is("userId, memberId"));
         final String snakeCase = camelCaseToSnakeCase(camelCase);
-        System.out.println("snakeCase: " + snakeCase);
+        assertThat(snakeCase, is("user_id, member_id"));
     }
 
     /**
