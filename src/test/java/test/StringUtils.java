@@ -82,4 +82,32 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return sb.toString();
     }
 
+    @Test
+    public void t2() {
+        assertThat(trueStringOrOwnNumber("true", 1), is(true));
+        assertThat(trueStringOrOwnNumber("false", 1), is(false));
+        assertThat(trueStringOrOwnNumber("1", 1), is(true));
+        assertThat(trueStringOrOwnNumber("1", 0), is(false));
+    }
+
+    /**
+     * Return whether or not the specific string is true, or specific value.
+     * 
+     * @param value
+     *            the specific string
+     * @param correctValue
+     *            the specific number
+     * @return {@code value == "true" || value == correctValue}
+     */
+    public static boolean trueStringOrOwnNumber(final String value, final int correctValue) {
+        if (isBlank(value)) {
+            return false;
+        }
+        try {
+            return (Boolean.parseBoolean(value)) || (correctValue == Integer.parseInt(value));
+        } catch (final NumberFormatException e) {
+        }
+        return false;
+    }
+
 }
