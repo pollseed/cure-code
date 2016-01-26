@@ -5,6 +5,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
+/**
+ * Class to expand {@link org.apache.commons.lang3.StringUtils}.
+ */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
     private static enum $C {
         REPLACE('\u005f'), SENTINEL('\uff20');
@@ -24,12 +27,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
-     * スネークケースをキャメルケースに変換します.<br>
-     * ※スネークケース以外の文字列には非対応です.
+     * Convert snakecase to camelcase, but It is nocompatible except for snakecase.
      * 
      * @param snakeCase
-     *            スネークケースの文字列
-     * @return キャメルケース
+     *            the string of snakecase
+     * @return the string of camelcase
      */
     public static String snakeCaseToCamelCase(final String snakeCase) {
         invalidIfError(snakeCase);
@@ -42,7 +44,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
                 break;
             }
             if (convertedToUpperCase) {
-                // _ をスキップさせる
+                // To skip '_'
                 convertedToUpperCase = false;
             } else if ($C.REPLACE.word == cs[i]) {
                 convertedToUpperCase = true;
@@ -61,12 +63,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
-     * キャメルケースをスネークケースに変換します.<br>
-     * ※キャメルケース以外の文字列には非対応です.
+     * Convert camelcase to snakecase, but It is nocompatible except for camelcase.
      * 
      * @param camelCase
-     *            キャメルケースの文字列
-     * @return スネークケース
+     *            the string of camelcase
+     * @return the string of snakecase
      */
     public static String camelCaseToSnakeCase(final String camelCase) {
         invalidIfError(camelCase);
@@ -80,4 +81,5 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return sb.toString();
     }
+
 }
